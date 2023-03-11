@@ -1,1 +1,115 @@
+Load and Check Data
 
+1. 
+```{r}
+library(readr)
+library(tidyverse)
+```
+
+2.
+```{r}
+data <- read_delim("gapminder.csv.bz2")
+```
+The dataset has 13055 rows and 25 columns. Overall, the data looks reasonably good.
+
+3.
+```{r}
+head(data, 3)
+```
+
+Descriptive Statistics
+
+1.
+```{r}
+data %>%
+  summarise(n = n_distinct(`iso3`))
+data %>%
+  summarise(n = n_distinct(`iso2`))
+data %>%
+  summarise(n = n_distinct(`name`))
+```
+There are 253 in iso3, 249 in iso2, and 250 in name.
+
+2.
+
+3.
+```{r}
+min(data$time, na.rm = TRUE)
+max(data$time, na.rm = TRUE)
+```
+The minimum year is 1960 and the maximum is 2019.
+CO2 Emissions
+
+1.
+```{r}
+table(data$time, is.na(data$co2_PC))
+table(data$time, is.na(data$co2))
+```
+The year with the most missing data are 2017, 2018, and 2019.
+
+2.
+```{r}
+dataplot <- data %>% 
+  filter(data$name == "United States of America"| data$name == "China" | data$name == "India"|data$name == "Venezuela"| data$name == "Ukraine")
+  
+plot(dataplot$time, dataplot$co2)
+```
+In this plot it is evident that two of the countries produce significantly more emissions than those of the other countries. Namely, one of
+the countries shows a steep and rapid increase in emissions from the year 2000 and approaching 2020. The other countries trends reflect 
+more stable developments. 
+
+3.
+```{r}
+dataplot <- data %>% 
+  filter(data$name == "United States of America"| data$name == "China" | data$name == "India"|data$name == "Venezuela"| data$name == "Ukraine")
+  
+plot(dataplot$time, dataplot$co2_PC)
+```
+Here in the plot per capita, we can observe some slightly different trends. While some of the countries show a gradual upwards trend in emissions, I can see that one of the countries actually had a steep decline 
+between 1990-2000. It is also evident that one of the countries has consistently emitted more co2 than any of the other countries. 
+
+4.
+```{r}
+data %>% 
+  group_by(region) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  filter(time == 2016) %>% 
+  summarise(mean = mean(co2_PC))
+```
+Given these computations, we can reasonably deduct that our data set is of reasonable quality since the calculated data makes logical sense. If we take into account population and other geographical factors, it is sensible that Africa has the smallest average followed by America and Oceania. Europe and Asia have greater population density which is likely responsible for the large different, amongst other factors.
+
+5.
+```{r}
+plot <- data %>% 
+  group_by(region) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  filter(time %in% c(1960,2016)) %>% 
+  summarise(time, mean = unique(mean(co2_PC)))
+plot %>% 
+  group_by(time) %>% 
+  ggplot+
+  geom_col(aes(x=region, y=mean, fill=factor(region)), col ="red")
+```
+
+6.
+The three largest emitters are Asia, Europe, and America. The three smallest emitters are Africa, Oceania, and the other regions.
+
+GDP Per Capita
+
+1.
+
+2.
+
+3.
+
+4.
+```{r}
+data %>% 
+  filter((time == '1960'), !is.na(lifeExpectancy)) %>% 
+  group_by(region) %>% 
+  summarize(meanin_1960 = mean(lifeExpectancy))
+data %>% 
+  filter((time == '2019'), !is.na(lifeExpectancy)) %>% 
+  group_by(region) %>% 
+  summarize(meanin_2019 = mean(lifeExpectancy))
+```
