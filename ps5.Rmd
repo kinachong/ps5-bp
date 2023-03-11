@@ -164,11 +164,11 @@ data %>%
 
 8.
 ```{r}
-gap %>% 
+data %>% 
   filter(!is.na(lifeExpectancy), time == '2019') %>% 
   select(lifeExpectancy, name) %>% 
   group_by(name) %>% 
   arrange(desc(rank(lifeExpectancy,na.last = TRUE, ties.method = "max")))
 ```
 
-This assignment took me around 8 hours to do
+This assignment took me around 8 hours to complete
