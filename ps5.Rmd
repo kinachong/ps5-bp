@@ -31,6 +31,7 @@ data %>%
 There are 253 in iso3, 249 in iso2, and 250 in name.
 
 2.
+unable to complete
 
 3.
 ```{r}
@@ -97,10 +98,34 @@ The three largest emitters are Asia, Europe, and America. The three smallest emi
 GDP Per Capita
 
 1.
+```{r}
+  data %>% 
+    filter(time == '2019') %>% 
+    group_by(region) %>% 
+    arrange(co2_PC) %>% 
+    slice_head(n=3) %>% 
+    select(region,name)
+  data %>% 
+    filter(time == '2019') %>% 
+    group_by(region) %>% 
+    arrange(co2_PC) %>% 
+    slice_tail(n=3) %>% 
+    select(region,name)
+```
 
 2.
-
+```{r}
+  data %>% 
+    filter(time == '2019') %>% 
+    group_by(name) %>% 
+    ggplot()+ geom_point(aes(x= lifeExpectancy, y=GDP_PC, size= totalPopulation, col = c("orange")), main = "average life expectency in vs GDP        Per Capita 2019")
+  data %>% 
+    filter((time == '1960'), !is.na(lifeExpectancy)) %>% 
+    group_by(region) %>% 
+    summarize(meanin_1960 = mean(lifeExpectancy))
+```
 3.
+Both plots from 1960 and 2019 show fairly similar patters. Both overall trend lines graduate upwards which would seem accurate in realistic context. One distinction that I can make between the two plots is that in the plot for 2019, the points on the graph become more dispersed than the ones in the previous plot. In the past 60 years, healthcare and biotechnical science has made tremendous strides in innovation and overall development which has increased the life expectancy of many regions worldwide.
 
 4.
 ```{r}
@@ -113,3 +138,37 @@ data %>%
   group_by(region) %>% 
   summarize(meanin_2019 = mean(lifeExpectancy))
 ```
+Yes, the results from these computations do reflect the same trends displayed in the plots above. 
+
+5.
+unable to complete
+
+6.
+```{r}
+data %>% 
+  filter(!is.na(GDP_PC), time %in% c('1960', '2019')) %>% 
+  ggplot(aes(x= GDP_PC, fill = factor(time)))+
+  geom_histogram(alpha = 0.5, position = "dodge", bins = 30)+ scale_fill_manual(values = c("yellow", "green"), labels =       c('1960','2019'))+labs(title = "GDP PC of 1960 vs 2019")+theme_minimal()
+```
+
+7.
+```{r}
+data %>% 
+  select(name, lifeExpectancy, time) %>% 
+  filter(!is.na(lifeExpectancy), time == '1960') %>%
+  mutate(rank = rank(desc(lifeExpectancy),na.last = TRUE, ties.method = "max")) %>% 
+  filter(!is.na(name), name == 'United States of America') %>% 
+  select(rank) %>% 
+  pull()-1
+```
+
+8.
+```{r}
+gap %>% 
+  filter(!is.na(lifeExpectancy), time == '2019') %>% 
+  select(lifeExpectancy, name) %>% 
+  group_by(name) %>% 
+  arrange(desc(rank(lifeExpectancy,na.last = TRUE, ties.method = "max")))
+```
+
+This assignment took me around 8 hours to do
